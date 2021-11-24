@@ -25,12 +25,6 @@ class Colors:
             Teamcolor = color(name, fore=(221, 224, 41))
         return Teamcolor
 
-
-    def get_rgb_color_from_skin(self, skin_id, valoApiSkins):
-        for skin in valoApiSkins.json()["data"]:
-            if skin_id == skin["uuid"]:
-                return self.tier_dict[skin["contentTierUuid"]]
-
     def level_to_color(self, level):
         if level >= 400:
             return color(level, fore=(0, 255, 255))

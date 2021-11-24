@@ -1,7 +1,3 @@
-
-
-
-
 class Rank:
     def __init__(self, Requests, log):
         self.Requests = Requests

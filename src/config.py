@@ -11,7 +11,7 @@ class Config:
             with open("config.json", "r") as file:
                 self.log("config opened")
                 config = json.load(file)
-                if config.get("cooldown") is None:
+                if config.get("cooldown") is None or config.get("dir") is None:
                     self.log("some config values are None, getting new config")
                     config = self.config_dialog(file)
         except (FileNotFoundError, JSONDecodeError):
@@ -20,10 +20,11 @@ class Config:
                 config = self.config_dialog(file)
         finally:
             self.cooldown = config["cooldown"]
+            self.dir = config["dir"]
             self.log(f"got cooldown with value '{self.cooldown}'")
 
     def config_dialog(self, fileToWrite: TextIOWrapper):
         self.log("color config prompt called")
-        jsonToWrite = {"cooldown": 1}
+        jsonToWrite = {"cooldown": 1, "dir": "C:/VALORANT-Rank-Stream-Displayer/"}
         json.dump(jsonToWrite, fileToWrite)
         return jsonToWrite

@@ -1,93 +1,48 @@
-<p align="center">
-    <a href="https://github.com/isaacKenyon/valorant-rank-yoinker/">
-        <img src="assets/Logo.png" alt="Logo" width="160" height="160">
-    </a>
-<h5 align="center"> VALORANT rank yoinker</h5>
-</p>
+# VALORANT Rank Stream Displayer
 
-[![Discord][discord-shield]][discord-url]
+Still in development
+
 [![Downloads][downloads-shield]][downloads-url]
+[![Discord][discord-shield]][discord-url]
 [![Language][language-shield]][language-url]
-[![YouTube][youtube-shield]][youtube-url]
 [![License][license-shield]][license-url]
-     
- 
-  <ol>
-    <li><a href="#about-the-project">About The Project</a></li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
-    <li><a href="#disclaimer">Disclaimer</a></li>
-  </ol>
-
-    
-## About The Project
-
- ![Screenshot](assets/Example.png)
-
-|Their Queue|Current Skin|Current Rank|Rank Rating|Peak Rank|Account Level|
-|:---:|:---:|:---:|:---:|:---:|:---:|
-|![Parties](assets/Party.png)|![Skin](assets/Skin.png)|![Rank](assets/Rank.png)|![Rating](assets/Rating.png)|![Peak](assets/PeakRank.png)|![Level](assets/Level.png)|
-    
 
 ## Usage
-    
- VALORANT must be open for this to work.
+1. Open the terminal
+2. Execute cd path/to/the/folder
+3. Execute pip install -r requirements.txt
+4. Execute python main.py
 
- If you are using the [release](https://github.com/isaacKenyon/valorant-rank-yoinker/releases/latest), all you have to do is run the .exe.
-    
-     NOTE: The .exe must be kept with its files, you can create a shortcut to it if you want to place it elsewhere.
+or 
 
-  Tutorial:
-  
-  [![YouTube][youtube-shield]][youtube-url]
+1. Run yrsd.exe
 
+## Custom Directory
+Currently it's hardcoded (if using the .exe) to the folder `C:/VALORANT-Rank-Stream-Displayer/Stream/`.
 
-## Contributing
-
- Any contributions you make are **greatly appreciated**.
-
- 1. Fork the Project `(gh repo fork https://github.com/isaacKenyon/VALORANT-rank-yoinker)`
- 2. Commit your Changes `(git commit -am 'Add some feature')`
- 3. [Open a Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork)
-
- 
-## Contact 
-
- Join the community discord:         
- 
+## Contact
 [![Discord Banner 2][discord-banner]][discord-url]
 
-
-
 ## Acknowledgements
-
+ - [IsaacKenyon](https://github.com/isaacKenyon) (core software - owner)
+ - [Hamper](https://github.com/OwOHamper) (added some fancy features to the core software)
  - [Valorant-API.com](https://valorant-api.com/)
- - [Hamper for all his amazing work](https://github.com/OwOHamper)
 
- 
- 
 ## Disclaimer
+**VALORANT Rank Stream Displayer** isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
 
- THIS PROJECT IS NOT ASSOCIATED OR ENDORSED BY RIOT GAMES. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
-    
- Also Rito, if you send a cease-and-desist, just know that I will frame it inside my bedroom
-    
+[discord-shield]: https://img.shields.io/discord/695727580950691960?color=7289da&label=Support&logo=discord&logoColor=7289da&style=for-the-badge
+[discord-url]: https://discord.gg/WgUDVAk
+[discord-banner]: https://discordapp.com/api/guilds/695727580950691960/widget.png?style=banner2
 
+[downloads-shield]: https://img.shields.io/github/downloads/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/total?style=for-the-badge&logo=github
+[downloads-url]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/releases/latest
 
-[discord-shield]: https://img.shields.io/discord/872101595037446144?color=7289da&label=Support&logo=discord&logoColor=7289da&style=for-the-badge
-[discord-url]: https://discord.gg/HeTKed64Ka
-[discord-banner]: https://discordapp.com/api/guilds/872101595037446144/widget.png?style=banner2
-
-[downloads-shield]: https://img.shields.io/github/downloads/isaacKenyon/VALORANT-rank-yoinker/total?style=for-the-badge&logo=github
-[downloads-url]: https://github.com/isaacKenyon/VALORANT-rank-yoinker/releases/latest
-
-[language-shield]: https://img.shields.io/github/languages/top/isaacKenyon/Valorant-rank-yoinker?logo=python&logoColor=yellow&style=for-the-badge
+[language-shield]: https://img.shields.io/github/languages/top/OnlyOneCookie/VALORANT-Rank-Stream-Displayer?logo=python&logoColor=yellow&style=for-the-badge
 [language-url]: https://www.python.org/
 
-[youtube-shield]: https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white
+[youtube-shield]:https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white
 [youtube-url]: https://youtu.be/TSLRd8Y9PiE
 
-[license-shield]: https://img.shields.io/github/license/isaacKenyon/valorant-rank-yoinker?style=for-the-badge
-[license-url]: https://github.com/isaacKenyon/valorant-rank-yoinker/blob/main/LICENSE
+[license-shield]: https://img.shields.io/github/license/OnlyOneCookie/VALORANT-Rank-Stream-Displayer?style=for-the-badge
+[license-url]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/blob/main/LICENSE

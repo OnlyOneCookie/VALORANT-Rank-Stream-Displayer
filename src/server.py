@@ -2,10 +2,7 @@ import asyncio
 from websocket_server import WebsocketServer
 from threading import Thread
 
-
 # websocket.enableTrace(True)
-
-
 
 class Server:
     def __init__(self, log):
@@ -22,7 +19,6 @@ class Server:
     def handle_new_client(self, client, server):
         if self.lastMessage != "":
             self.send_message(self.lastMessage)
-
 
     def send_message(self, message):
         self.lastMessage = message

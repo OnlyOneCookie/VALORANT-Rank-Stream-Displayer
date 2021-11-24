@@ -1,5 +1,5 @@
 {
    "status_ok": true,
-   "message": "Match loadouts available! You need to update to version 1.251 to use it. https://vry.netlify.app/matchLoadouts",
-   "print_message": true
+   "message": "",
+   "print_message": false
 }

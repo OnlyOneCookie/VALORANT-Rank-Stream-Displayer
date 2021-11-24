@@ -1,13 +1,7 @@
-
-
-
-
 class Coregame:
     def __init__(self, Requests, log):
         self.log = log
-
         self.Requests = Requests
-
         self.response = ""
 
     def get_coregame_match_id(self):

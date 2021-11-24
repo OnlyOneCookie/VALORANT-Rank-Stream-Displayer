@@ -2,7 +2,6 @@ import base64
 import json
 import time
 
-
 class Presences:
     def __init__(self, Requests, log):
         self.Requests = Requests
@@ -17,8 +16,7 @@ class Presences:
         for presence in presences:
             if presence['puuid'] == self.Requests.puuid:
                 return json.loads(base64.b64decode(presence['private']))["sessionLoopState"]
-
-
+                
     def decode_presence(self, private):
         # try:
         if "{" not in str(private) and private is not None and str(private) != "":

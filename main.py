@@ -17,7 +17,6 @@ from src.rank import Rank
 from src.content import Content
 from src.names import Names
 from src.presences import Presences
-from src.Loadouts import Loadouts
 
 from src.states.menu import Menu
 from src.states.pregame import Pregame
@@ -30,16 +29,13 @@ from src.server import Server
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 os.system('cls')
-os.system(f"title VALORANT rank yoinker v{version}")
-
+os.system(f"title VALORANT Rank Stream Displayer v{version}")
 
 server = ""
-
 
 def program_exit(status: int):  # so we don't need to import the entire sys module
     log(f"exited program with error code {status}")
     raise SystemExit(status)
-
 
 try:
     Requests = Requests(version)
@@ -48,17 +44,12 @@ try:
 
     Logging = Logging()
     log = Logging.log
-
     cfg = Config(log)
 
     rank = Rank(Requests, log)
-
     content = Content(Requests, log)
-
     namesClass = Names(Requests, log)
-
     presences = Presences(Requests, log)
-
 
     menu = Menu(Requests, log, presences)
     pregame = Pregame(Requests, log)
@@ -72,17 +63,10 @@ try:
 
     colors = Colors(hide_names, agent_dict, AGENTCOLORLIST)
 
-    loadoutsClass = Loadouts(Requests, log, colors, Server)
     tableClass = Table()
 
+    log(f"VALORANT Rank Stream Displayer v{version}")
 
-
-    log(f"VALORANT rank yoinker v{version}")
-
-
-
-
-    valoApiSkins = requests.get("https://valorant-api.com/v1/weapons/skins")
     gameContent = content.get_content()
     seasonID = content.get_latest_season_id(gameContent)
     lastGameState = ""
@@ -105,10 +89,10 @@ try:
             if game_state == "INGAME":
                 coregame_stats = coregame.get_coregame_stats()
                 Players = coregame_stats["Players"]
+                Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
                 server = GAMEPODS[coregame_stats["GamePodID"]]
                 presences.wait_for_presence(namesClass.get_players_puuid(Players))
                 names = namesClass.get_names_from_puuids(Players)
-                loadouts = loadoutsClass.get_match_loadouts(coregame.get_coregame_match_id(), Players, "vandal", valoApiSkins, names, state="game")
                 with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
                     presence = presences.get_presence()
                     partyOBJ = menu.get_party_json(namesClass.get_players_puuid(Players), presence)
@@ -146,7 +130,7 @@ try:
                                                         Requests.puuid)
                         if lastTeam != player["TeamID"]:
                             if lastTeamBoolean:
-                                tableClass.add_row_table(table, ["", "", "", "", "", "", "", "", ""])
+                                tableClass.add_row_table(table, ["", "", "", "", "", "", "", ""])
                         lastTeam = player['TeamID']
                         lastTeamBoolean = True
                         PLcolor = colors.level_to_color(player_level)
@@ -158,21 +142,16 @@ try:
                         # NAME
                         name = Namecolor
 
-                        # VIEWS
-                        # views = get_views(names[player["Subject"]])
-
-                        # skin
-                        skin = loadouts[player["Subject"]]
-
                         # RANK
                         rankName = NUMBERTORANKS[playerRank[0]]
+                        rankDisplayName = RANKS[playerRank[0]]
 
                         # RANK RATING
                         rr = playerRank[1]
 
-
                         # PEAK RANK
                         peakRank = NUMBERTORANKS[playerRank[3]]
+                        peakRankDisplay = RANKS[playerRank[3]]
 
                         # LEADERBOARD
                         leaderboard = playerRank[2]
@@ -182,23 +161,27 @@ try:
                         tableClass.add_row_table(table, [party_icon,
                                               agent,
                                               name,
-                                              # views,
-                                              skin,
                                               rankName,
                                               rr,
                                               peakRank,
                                               leaderboard,
                                               level
                                               ])
+                        Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
+                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
+                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
+                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
                         bar()
             elif game_state == "PREGAME":
                 pregame_stats = pregame.get_pregame_stats()
                 server = GAMEPODS[pregame_stats["GamePodID"]]
                 Players = pregame_stats["AllyTeam"]["Players"]
+                Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
                 presences.wait_for_presence(namesClass.get_players_puuid(Players))
                 names = namesClass.get_names_from_puuids(Players)
-                loadouts = loadoutsClass.get_match_loadouts(pregame.get_pregame_match_id(), pregame_stats, "vandal", valoApiSkins, names,
-                                              state="pregame")
                 with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
                     presence = presences.get_presence()
                     partyOBJ = menu.get_party_json(namesClass.get_players_puuid(Players), presence)
@@ -254,20 +237,16 @@ try:
                         # NAME
                         name = NameColor
 
-                        # VIEWS
-                        # views = get_views(names[player["Subject"]])
-
-                        # skin
-                        skin = loadouts[player["Subject"]]
-
                         # RANK
                         rankName = NUMBERTORANKS[playerRank[0]]
+                        rankDisplayName = RANKS[playerRank[0]]
 
                         # RANK RATING
                         rr = playerRank[1]
 
                         # PEAK RANK
                         peakRank = NUMBERTORANKS[playerRank[3]]
+                        peakRankDisplay = RANKS[playerRank[3]]
 
                         # LEADERBOARD
                         leaderboard = playerRank[2]
@@ -278,14 +257,19 @@ try:
                         tableClass.add_row_table(table, [party_icon,
                                               agent,
                                               name,
-                                              # views,
-                                              skin,
                                               rankName,
                                               rr,
                                               peakRank,
                                               leaderboard,
-                                              level,
+                                              level
                                               ])
+                        Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
+                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
+                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
+                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
                         bar()
             if game_state == "MENUS":
                 Players = menu.get_party_members(Requests.puuid, presence)
@@ -314,12 +298,14 @@ try:
 
                         # RANK
                         rankName = NUMBERTORANKS[playerRank[0]]
+                        rankDisplayName = RANKS[playerRank[0]]
 
                         # RANK RATING
                         rr = playerRank[1]
 
                         # PEAK RANK
                         peakRank = NUMBERTORANKS[playerRank[3]]
+                        peakRankDisplay = RANKS[playerRank[3]]
 
                         # LEADERBOARD
                         leaderboard = playerRank[2]
@@ -330,25 +316,30 @@ try:
                         tableClass.add_row_table(table, [party_icon,
                                               agent,
                                               name,
-                                              "",
                                               rankName,
                                               rr,
                                               peakRank,
                                               leaderboard,
                                               level
                                               ])
-                        # table.add_rows([])
+                        Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
+                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
+                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
                         bar()
             if (title := game_state_dict.get(game_state)) is None:
-                program_exit(1)
+                table.title = f"VALORANT Status: closed"
             if server != "":
-                table.title = f"Valorant status: {title} - {server}"
+                table.title = f"VALORANT Status: {title} - {server}"
             else:
-                table.title = f"Valorant status: {title}"
+                table.title = f"VALORANT Status: {title}"
             server = ""
-            table.field_names = ["Party", "Agent", "Name", "Skin", "Rank", "RR", "Peak Rank", "pos.", "Level"]
+            table.field_names = ["Party", "Agent", "Name", "Rank", "RR", "Peak Rank", "#", "Level"]
             print(table)
-            print(f"VALORANT rank yoinker v{version}")
+            print(f"VALORANT Rank Stream Displayer v{version}")
         if cfg.cooldown == 0:
             input("Press enter to fetch again...")
         else:

@@ -1,6 +1,5 @@
 from prettytable import PrettyTable
 
-
 class Table:
     def __init__(self):
         pass

@@ -1,8 +1,3 @@
-
-
-
-
-
 class Menu:
     def __init__(self, Requests, log, presences):
         self.Requests = Requests
@@ -30,12 +25,6 @@ class Menu:
                 decodedPresence = self.presences.decode_presence(presence["private"])
                 if decodedPresence["isValid"]:
                     party_id = decodedPresence["partyId"]
-                    res.append({"Subject": presence["puuid"], "PlayerIdentity": {"AccountLevel":
-                                                                                     decodedPresence["accountLevel"]}})
-        for presence in presencesDICT:
-            decodedPresence = self.presences.decode_presence(presence["private"])
-            if decodedPresence["isValid"]:
-                if decodedPresence["partyId"] == party_id and presence["puuid"] != self_puuid:
                     res.append({"Subject": presence["puuid"], "PlayerIdentity": {"AccountLevel":
                                                                                      decodedPresence["accountLevel"]}})
         self.log(f"retrieved party members: {res}")

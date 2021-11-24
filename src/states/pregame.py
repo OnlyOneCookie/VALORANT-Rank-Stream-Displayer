@@ -1,16 +1,8 @@
-
-
-
-
 class Pregame:
     def __init__(self, Requests, log):
         self.log = log
-
         self.Requests = Requests
-
         self.response = ""
-
-
 
     def get_pregame_match_id(self):
         global response
