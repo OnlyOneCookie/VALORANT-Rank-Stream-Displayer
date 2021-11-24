@@ -8,19 +8,11 @@ Still in development
 [![License][license-shield]][license-url]
 
 ## Usage
-1. Open the terminal
-2. Execute cd path/to/the/folder
-3. Execute pip install -r requirements.txt
-4. Execute python main.py
-
-or 
-
 1. Run yrsd.exe
+2. You can find the files in `C:/VRSD/` but you can change the path to whatever you like.  
+Just open the `config.json` file and edit the dir path.
 
-## Custom Directory
-Currently it's hardcoded (if using the .exe) to the folder `C:/VALORANT-Rank-Stream-Displayer/Stream/`.
-
-## Contact
+## Support
 [![Discord Banner 2][discord-banner]][discord-url]
 
 ## Acknowledgements

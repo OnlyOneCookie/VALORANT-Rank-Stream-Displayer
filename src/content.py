@@ -29,6 +29,11 @@ class Content():
         return agent_dict
 
     def set_values_in_file(self, directory, type, value):
+        if not directory.endswith('/'):
+            directory += '/'
+        if not os.path.exists(directory):
+                os.makedirs(directory)
+
         if type == "rank" or type == "peakRank" or type == "agent":
             url = ""
             if type == "rank" or type == "peakRank":
@@ -48,8 +53,6 @@ class Content():
         else:
             file = f"{directory}{type}.txt"
 
-            if not os.path.exists(directory):
-                os.makedirs(directory)
             with open(file, 'w+', encoding='utf-8') as f:
                 f.write(f"{value}")
                 f.close()

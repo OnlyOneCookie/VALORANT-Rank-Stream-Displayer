@@ -1,6 +1,6 @@
 from colr import color
 
-version = "1.00"
+version = "1.01"
 enablePrivateLogging = False
 hide_names = False
 directory_output = ""
