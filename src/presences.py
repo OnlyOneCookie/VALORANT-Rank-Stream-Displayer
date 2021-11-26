@@ -9,7 +9,7 @@ class Presences:
 
     def get_presence(self):
         presences = self.Requests.fetch(url_type="local", endpoint="/chat/v4/presences", method="get")
-        self.log(f"fethced presences:")
+        self.log(f"fetched presences:")
         return presences['presences']
 
     def get_game_state(self, presences):
