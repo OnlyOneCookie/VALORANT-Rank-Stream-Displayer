@@ -12,7 +12,6 @@ from src.constants import *
 from src.requests import Requests
 from src.logs import Logging
 from src.config import Config
-from src.colors import Colors
 from src.rank import Rank
 from src.content import Content
 from src.names import Names
@@ -46,7 +45,7 @@ try:
     log = Logging.log
     cfg = Config(log)
 
-    rank = Rank(Requests, log)
+    rankClass = Rank(Requests, log)
     content = Content(Requests, log)
     namesClass = Names(Requests, log)
     presences = Presences(Requests, log)
@@ -58,10 +57,7 @@ try:
     Server = Server(Requests)
     Server.start_server()
 
-
     agent_dict = content.get_all_agents()
-
-    colors = Colors(hide_names, agent_dict, AGENTCOLORLIST)
 
     tableClass = Table()
 
@@ -78,266 +74,269 @@ try:
             game_state = presences.get_game_state(presence)
         except TypeError:
             raise Exception("Game has not started yet!")
+
         if cfg.cooldown == 0 or game_state != lastGameState:
             log(f"getting new {game_state} scoreboard")
             lastGameState = game_state
+
             game_state_dict = {
                 "INGAME": color('In-Game', fore=(241, 39, 39)),
                 "PREGAME": color('Agent Select', fore=(103, 237, 76)),
                 "MENUS": color('In-Menus', fore=(238, 241, 54)),
+                None: color("")
             }
+
             if game_state == "INGAME":
                 coregame_stats = coregame.get_coregame_stats()
+                server = GAMEPODS[coregame_stats["GamePodID"]]
+
                 Players = coregame_stats["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
-                server = GAMEPODS[coregame_stats["GamePodID"]]
+                
                 presences.wait_for_presence(namesClass.get_players_puuid(Players))
                 names = namesClass.get_names_from_puuids(Players)
-                with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
+
+                with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     presence = presences.get_presence()
-                    partyOBJ = menu.get_party_json(namesClass.get_players_puuid(Players), presence)
                     log(f"retrieved names dict: {names}")
-                    Players.sort(key=lambda Players: Players["PlayerIdentity"].get("AccountLevel"), reverse=True)
-                    Players.sort(key=lambda Players: Players["TeamID"], reverse=True)
-                    partyCount = 0
-                    partyIcons = {}
-                    lastTeamBoolean = False
-                    lastTeam = "Red"
-                    for player in Players:
-                        party_icon = ''
+                    
+                    # Player
+                    player = Players[0]
 
-                        # set party premade icon
-                        for party in partyOBJ:
-                            if player["Subject"] in partyOBJ[party]:
-                                if party not in partyIcons:
-                                    partyIcons.update({party: PARTYICONLIST[partyCount]})
-                                    # PARTY_ICON
-                                    party_icon = PARTYICONLIST[partyCount]
-                                    partyCount += 1
-                                else:
-                                    # PARTY_ICON
-                                    party_icon = partyIcons[party]
-                        playerRank = rank.get_rank(player["Subject"], seasonID)
+                    # Agent
+                    agent = str(agent_dict.get(player["CharacterID"]))
+
+                    # Name
+                    name = names[player["Subject"]]
+
+                    playerRank = rankClass.get_rank(player["Subject"], seasonID)
+                    rankStatus = playerRank[1]
+
+                    while not rankStatus:
+                        print("You have been rate limited, 😞 waiting 10 seconds!")
+                        time.sleep(10)
+                        playerRank = rankClass.get_rank(player["Subject"], seasonID)
                         rankStatus = playerRank[1]
-                        while not rankStatus:
-                            print("You have been rate limited, 😞 waiting 10 seconds!")
-                            time.sleep(10)
-                            playerRank = rank.get_rank(player["Subject"], seasonID)
-                            rankStatus = playerRank[1]
-                        playerRank = playerRank[0]
-                        player_level = player["PlayerIdentity"].get("AccountLevel")
-                        Namecolor = colors.get_color_from_team(player["TeamID"], names[player["Subject"]], player["Subject"],
-                                                        Requests.puuid)
-                        if lastTeam != player["TeamID"]:
-                            if lastTeamBoolean:
-                                tableClass.add_row_table(table, ["", "", "", "", "", "", "", ""])
-                        lastTeam = player['TeamID']
-                        lastTeamBoolean = True
-                        PLcolor = colors.level_to_color(player_level)
 
-                        # AGENT
-                        # agent = str(agent_dict.get(player["CharacterID"].lower()))
-                        agent = colors.get_agent_from_uuid(player["CharacterID"].lower())
+                    playerRank = playerRank[0]
 
-                        # NAME
-                        name = Namecolor
+                    # Rank
+                    rank = RANKS[playerRank[0]]
 
-                        # RANK
-                        rankName = NUMBERTORANKS[playerRank[0]]
-                        rankDisplayName = RANKS[playerRank[0]]
+                    # Rank Rating
+                    rr = playerRank[1]
 
-                        # RANK RATING
-                        rr = playerRank[1]
+                    # Peak Rank
+                    peakRank = RANKS[playerRank[3]]
 
-                        # PEAK RANK
-                        peakRank = NUMBERTORANKS[playerRank[3]]
-                        peakRankDisplay = RANKS[playerRank[3]]
+                    # Leaderboard
+                    leaderboard = playerRank[2]
 
-                        # LEADERBOARD
-                        leaderboard = playerRank[2]
+                    # Level
+                    level = player["PlayerIdentity"].get("AccountLevel")
 
-                        # LEVEL
-                        level = PLcolor
-                        tableClass.add_row_table(table, [party_icon,
-                                              agent,
-                                              name,
-                                              rankName,
-                                              rr,
-                                              peakRank,
-                                              leaderboard,
-                                              level
-                                              ])
-                        Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
-                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
-                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
-                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                        bar()
+                    tableClass.add_row_table(table, [agent,
+                                                name,
+                                                rank,
+                                                rr,
+                                                peakRank,
+                                                leaderboard,
+                                                level
+                                            ])
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
+                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
+                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
+                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    bar()
+                        
             elif game_state == "PREGAME":
                 pregame_stats = pregame.get_pregame_stats()
                 server = GAMEPODS[pregame_stats["GamePodID"]]
+
                 Players = pregame_stats["AllyTeam"]["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
                 presences.wait_for_presence(namesClass.get_players_puuid(Players))
                 names = namesClass.get_names_from_puuids(Players)
-                with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
+
+                with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     presence = presences.get_presence()
-                    partyOBJ = menu.get_party_json(namesClass.get_players_puuid(Players), presence)
                     log(f"retrieved names dict: {names}")
-                    Players.sort(key=lambda Players: Players["PlayerIdentity"].get("AccountLevel"), reverse=True)
-                    partyCount = 0
-                    partyIcons = {}
-                    for player in Players:
-                        party_icon = ''
 
-                        # set party premade icon
-                        for party in partyOBJ:
-                            if player["Subject"] in partyOBJ[party]:
-                                if party not in partyIcons:
-                                    partyIcons.update({party: PARTYICONLIST[partyCount]})
-                                    # PARTY_ICON
-                                    party_icon = PARTYICONLIST[partyCount]
-                                else:
-                                    # PARTY_ICON
-                                    party_icon = partyIcons[party]
-                                partyCount += 1
-                        playerRank = rank.get_rank(player["Subject"], seasonID)
+                    # Player
+                    player = Players[0]
+
+                    playerRank = rankClass.get_rank(player["Subject"], seasonID)
+                    rankStatus = playerRank[1]
+
+                    while not rankStatus:
+                        print("You have been rate limited, 😞 waiting 10 seconds!")
+                        time.sleep(10)
+                        playerRank = rankClass.get_rank(player["Subject"], seasonID)
                         rankStatus = playerRank[1]
-                        while not rankStatus:
-                            print("You have been rate limited, 😞 waiting 10 seconds!")
-                            time.sleep(10)
-                            playerRank = rank.get_rank(player["Subject"], seasonID)
-                            rankStatus = playerRank[1]
-                        playerRank = playerRank[0]
-                        player_level = player["PlayerIdentity"].get("AccountLevel")
-                        if player["PlayerIdentity"]["Incognito"]:
-                            NameColor = colors.get_color_from_team(pregame_stats['Teams'][0]['TeamID'],
-                                                            names[player["Subject"]],
-                                                            player["Subject"], Requests.puuid, agent=player["CharacterID"])
-                        else:
-                            NameColor = colors.get_color_from_team(pregame_stats['Teams'][0]['TeamID'],
-                                                            names[player["Subject"]],
-                                                            player["Subject"], Requests.puuid)
 
-                        PLcolor = colors.level_to_color(player_level)
-                        if player["CharacterSelectionState"] == "locked":
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())),
-                                                fore=(255, 255, 255))
-                        elif player["CharacterSelectionState"] == "selected":
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())),
-                                                fore=(128, 128, 128))
-                        else:
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())), fore=(54, 53, 51))
+                    playerRank = playerRank[0]
 
-                        # AGENT
-                        agent = agent_color
+                    # Agent
+                    if player["CharacterSelectionState"] == "locked":
+                        agent = str(agent_dict.get(player["CharacterID"]))
+                    elif player["CharacterSelectionState"] == "selected":
+                        agent = str(agent_dict.get(player["CharacterID"]))
+                    else:
+                        agent = str(agent_dict.get(player["CharacterID"]))
 
-                        # NAME
-                        name = NameColor
+                    # Name
+                    name = names[player["Subject"]]
 
-                        # RANK
-                        rankName = NUMBERTORANKS[playerRank[0]]
-                        rankDisplayName = RANKS[playerRank[0]]
+                    # Rank
+                    rank = RANKS[playerRank[0]]
 
-                        # RANK RATING
-                        rr = playerRank[1]
+                    # Rank Rating
+                    rr = playerRank[1]
 
-                        # PEAK RANK
-                        peakRank = NUMBERTORANKS[playerRank[3]]
-                        peakRankDisplay = RANKS[playerRank[3]]
+                    # Peak Rank
+                    peakRank = RANKS[playerRank[3]]
 
-                        # LEADERBOARD
-                        leaderboard = playerRank[2]
+                    # Leaderboard
+                    leaderboard = playerRank[2]
 
-                        # LEVEL
-                        level = PLcolor
+                    # Level
+                    level = player["PlayerIdentity"].get("AccountLevel")
 
-                        tableClass.add_row_table(table, [party_icon,
-                                              agent,
-                                              name,
-                                              rankName,
-                                              rr,
-                                              peakRank,
-                                              leaderboard,
-                                              level
-                                              ])
-                        Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
-                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
-                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
-                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                        bar()
-            if game_state == "MENUS":
+                    tableClass.add_row_table(table, [agent,
+                                                name,
+                                                rank,
+                                                rr,
+                                                peakRank,
+                                                leaderboard,
+                                                level
+                                            ])
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
+                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
+                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
+                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    bar()
+            elif game_state == "MENUS":
+                server = ""
+
                 Players = menu.get_party_members(Requests.puuid, presence)
                 names = namesClass.get_names_from_puuids(Players)
-                with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
+                
+                with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     log(f"retrieved names dict: {names}")
-                    Players.sort(key=lambda Players: Players["PlayerIdentity"].get("AccountLevel"), reverse=True)
-                    for player in Players:
-                        party_icon = PARTYICONLIST[0]
-                        playerRank = rank.get_rank(player["Subject"], seasonID)
+
+                    player = Players[0]
+
+                    playerRank = rankClass.get_rank(player["Subject"], seasonID)
+                    rankStatus = playerRank[1]
+
+                    while not rankStatus:
+                        print("You have been rate limited, 😞 waiting 10 seconds!")
+                        time.sleep(10)
+                        playerRank = rankClass.get_rank(player["Subject"], seasonID)
                         rankStatus = playerRank[1]
-                        while not rankStatus:
-                            print("You have been rate limited, 😞 waiting 10 seconds!")
-                            time.sleep(10)
-                            playerRank = rank.get_rank(player["Subject"], seasonID)
-                            rankStatus = playerRank[1]
-                        playerRank = playerRank[0]
-                        player_level = player["PlayerIdentity"].get("AccountLevel")
-                        PLcolor = colors.level_to_color(player_level)
 
-                        # AGENT
-                        agent = ""
+                    playerRank = playerRank[0]
 
-                        # NAME
-                        name = names[player["Subject"]]
+                    # Agent
+                    agent = ""
 
-                        # RANK
-                        rankName = NUMBERTORANKS[playerRank[0]]
-                        rankDisplayName = RANKS[playerRank[0]]
+                    # Name
+                    name = names[player["Subject"]]
 
-                        # RANK RATING
-                        rr = playerRank[1]
+                    # Rank
+                    rank = RANKS[playerRank[0]]
 
-                        # PEAK RANK
-                        peakRank = NUMBERTORANKS[playerRank[3]]
-                        peakRankDisplay = RANKS[playerRank[3]]
+                    # Rank Rating
+                    rr = playerRank[1]
 
-                        # LEADERBOARD
-                        leaderboard = playerRank[2]
+                    # Peak Rank
+                    peakRank = RANKS[playerRank[3]]
 
-                        # LEVEL
-                        level = str(player_level)
+                    # Leaderboard
+                    leaderboard = playerRank[2]
 
-                        tableClass.add_row_table(table, [party_icon,
-                                              agent,
-                                              name,
-                                              rankName,
-                                              rr,
-                                              peakRank,
-                                              leaderboard,
-                                              level
-                                              ])
-                        Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
-                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
-                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
-                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                        bar()
-            if (title := game_state_dict.get(game_state)) is None:
+                    # Level
+                    level = player["PlayerIdentity"].get("AccountLevel")
+
+                    tableClass.add_row_table(table, [agent,
+                                                name,
+                                                rank,
+                                                rr,
+                                                peakRank,
+                                                leaderboard,
+                                                level
+                                            ])
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
+                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
+                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
+                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    bar()
+            elif game_state == None:
+                server = ""
+                with alive_bar(total=1, title='Loading', bar='classic2') as bar:
+                    # Agent
+                    agent = ""
+
+                    # Name
+                    name = ""
+
+                    # Rank
+                    rank = ""
+
+                    # Rank Rating
+                    rr = ""
+
+                    # Peak Rank
+                    peakRank = ""
+
+                    # Leaderboard
+                    leaderboard = ""
+
+                    # Level
+                    level = ""
+
+                    tableClass.add_row_table(table, [agent,
+                                                name,
+                                                rank,
+                                                rr,
+                                                peakRank,
+                                                leaderboard,
+                                                level
+                                            ])
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
+                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
+                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
+                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    bar()
+
+
+            title = game_state_dict.get(game_state)
+
+            if game_state is None:
                 table.title = f"VALORANT Status: closed"
-            if server != "":
-                table.title = f"VALORANT Status: {title} - {server}"
             else:
-                table.title = f"VALORANT Status: {title}"
-            server = ""
-            table.field_names = ["Party", "Agent", "Name", "Rank", "RR", "Peak Rank", "#", "Level"]
+                if server != "":
+                    table.title = f"VALORANT Status: {title} - {server}"
+                else:
+                    table.title = f"VALORANT Status: {title}"
+
+            table.field_names = ["Agent", "Name", "Rank", "RR", "Peak Rank", "#", "Level"]
             print(table)
             print(f"VALORANT Rank Stream Displayer v{version}")
         if cfg.cooldown == 0:
