@@ -22,9 +22,10 @@ class Config:
             self.cooldown = config["cooldown"]
             self.dir = config["dir"]
             self.log(f"got cooldown with value '{self.cooldown}'")
+            self.log(f"got dir with value '{self.dir}'")
 
     def config_dialog(self, fileToWrite: TextIOWrapper):
-        self.log("color config prompt called")
-        jsonToWrite = {"cooldown": 1, "dir": "C:/VALORANT-Rank-Stream-Displayer/"}
+        self.log("config prompt called")
+        jsonToWrite = {"cooldown": self.cooldown, "dir": self.dir}
         json.dump(jsonToWrite, fileToWrite)
         return jsonToWrite
