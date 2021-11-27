@@ -1,6 +1,6 @@
 from colr import color
 
-version = "1.01"
+version = "1.10"
 
 GAMEPODS = {
     "aresriot.aws-rclusterprod-mes1-1.eu-gp-bahrain-awsedge-1": "Bahrain",
