@@ -58,7 +58,6 @@ try:
     Server = Server(Requests)
     Server.start_server()
 
-
     agent_dict = content.get_all_agents()
 
     colors = Colors(hide_names, agent_dict, AGENTCOLORLIST)
@@ -96,12 +95,16 @@ try:
                 with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     presence = presences.get_presence()
                     log(f"retrieved names dict: {names}")
-                    Players.sort(key=lambda Players: Players["PlayerIdentity"].get("AccountLevel"), reverse=True)
-                    Players.sort(key=lambda Players: Players["TeamID"], reverse=True)
                     
-                    player = Players.index(0)
+                    # Player
+                    player = Players[0]
+
+                    # Agent
                     agent = str(agent_dict.get(player["CharacterID"]))
+
+                    # Name
                     name = names[player["Subject"]]
+
                     playerRank = rank.get_rank(player["Subject"], seasonID)
                     rankStatus = playerRank[1]
 
@@ -111,16 +114,16 @@ try:
                         playerRank = rank.get_rank(player["Subject"], seasonID)
                         rankStatus = playerRank[1]
 
+                    playerRank = playerRank[0]
+
                     # Rank
-                    rankName = NUMBERTORANKS[playerRank[0]]
-                    rankDisplayName = RANKS[playerRank[0]]
+                    rank = RANKS[playerRank[0]]
 
                     # Rank Rating
                     rr = playerRank[1]
 
                     # Peak Rank
-                    peakRank = NUMBERTORANKS[playerRank[3]]
-                    peakRankDisplay = RANKS[playerRank[3]]
+                    peakRank = RANKS[playerRank[3]]
 
                     # Leaderboard
                     leaderboard = playerRank[2]
@@ -130,21 +133,21 @@ try:
 
                     tableClass.add_row_table(table, [agent,
                                                 name,
-                                                rankName,
+                                                rank,
                                                 rr,
                                                 peakRank,
                                                 leaderboard,
                                                 level
                                               ])
-                    Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
                     Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                    Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
                     Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
                     Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
                     Content.set_values_in_file(Requests, cfg.dir, "level", level)
                     Content.set_values_in_file(Requests, cfg.dir, "server", server)
-                    bar()   
+                    bar()
                         
             elif game_state == "PREGAME":
                 pregame_stats = pregame.get_pregame_stats()
@@ -156,76 +159,64 @@ try:
                 with alive_bar(total=len(Players), title='Fetching Players', bar='classic2') as bar:
                     presence = presences.get_presence()
                     log(f"retrieved names dict: {names}")
-                    Players.sort(key=lambda Players: Players["PlayerIdentity"].get("AccountLevel"), reverse=True)
-                    for player in Players:
+
+                    # Player
+                    player = Players[0]
+
+                    playerRank = rank.get_rank(player["Subject"], seasonID)
+                    rankStatus = playerRank[1]
+
+                    while not rankStatus:
+                        print("You have been rate limited, 😞 waiting 10 seconds!")
+                        time.sleep(10)
                         playerRank = rank.get_rank(player["Subject"], seasonID)
                         rankStatus = playerRank[1]
-                        while not rankStatus:
-                            print("You have been rate limited, 😞 waiting 10 seconds!")
-                            time.sleep(10)
-                            playerRank = rank.get_rank(player["Subject"], seasonID)
-                            rankStatus = playerRank[1]
-                        playerRank = playerRank[0]
-                        player_level = player["PlayerIdentity"].get("AccountLevel")
-                        if player["PlayerIdentity"]["Incognito"]:
-                            NameColor = colors.get_color_from_team(pregame_stats['Teams'][0]['TeamID'],
-                                                            names[player["Subject"]],
-                                                            player["Subject"], Requests.puuid, agent=player["CharacterID"])
-                        else:
-                            NameColor = colors.get_color_from_team(pregame_stats['Teams'][0]['TeamID'],
-                                                            names[player["Subject"]],
-                                                            player["Subject"], Requests.puuid)
 
-                        PLcolor = colors.level_to_color(player_level)
-                        if player["CharacterSelectionState"] == "locked":
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())),
-                                                fore=(255, 255, 255))
-                        elif player["CharacterSelectionState"] == "selected":
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())),
-                                                fore=(128, 128, 128))
-                        else:
-                            agent_color = color(str(agent_dict.get(player["CharacterID"].lower())), fore=(54, 53, 51))
+                    playerRank = playerRank[0]
 
-                        # AGENT
-                        agent = agent_color
+                    # Agent
+                    if player["CharacterSelectionState"] == "locked":
+                        agent = str(agent_dict.get(player["CharacterID"]))
+                    elif player["CharacterSelectionState"] == "selected":
+                        agent = str(agent_dict.get(player["CharacterID"]))
+                    else:
+                        agent = str(agent_dict.get(player["CharacterID"]))
 
-                        # NAME
-                        name = NameColor
+                    # Name
+                    name = names[player["Subject"]]
 
-                        # RANK
-                        rankName = NUMBERTORANKS[playerRank[0]]
-                        rankDisplayName = RANKS[playerRank[0]]
+                    # Rank
+                    rank = RANKS[playerRank[0]]
 
-                        # RANK RATING
-                        rr = playerRank[1]
+                    # Rank Rating
+                    rr = playerRank[1]
 
-                        # PEAK RANK
-                        peakRank = NUMBERTORANKS[playerRank[3]]
-                        peakRankDisplay = RANKS[playerRank[3]]
+                    # Peak Rank
+                    peakRank = RANKS[playerRank[3]]
 
-                        # LEADERBOARD
-                        leaderboard = playerRank[2]
+                    # Leaderboard
+                    leaderboard = playerRank[2]
 
-                        # LEVEL
-                        level = PLcolor
+                    # Level
+                    level = player["PlayerIdentity"].get("AccountLevel")
 
-                        tableClass.add_row_table(table, [agent,
-                                                name,
-                                                rankName,
-                                                rr,
-                                                peakRank,
-                                                leaderboard,
-                                                level
-                                              ])
-                        Content.set_values_in_file(Requests, cfg.dir, "agent", str(agent_dict.get(player["CharacterID"])))
-                        Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                        Content.set_values_in_file(Requests, cfg.dir, "rank", rankDisplayName)
-                        Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                        Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRankDisplay)
-                        Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                        Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                        Content.set_values_in_file(Requests, cfg.dir, "server", server)
-                        bar()
+                    tableClass.add_row_table(table, [agent,
+                                            name,
+                                            rank,
+                                            rr,
+                                            peakRank,
+                                            leaderboard,
+                                            level
+                                            ])
+                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
+                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
+                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
+                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
+                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
+                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
+                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
+                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    bar()
             if game_state == "MENUS":
                 Players = menu.get_party_members(Requests.puuid, presence)
                 names = namesClass.get_names_from_puuids(Players)
