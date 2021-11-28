@@ -1,7 +1,11 @@
-[![Project Logo][project-logo]][project-url]
-# VALORANT Rank Stream Displayer
 
-Still in development
+<p align="center">
+ <a href="https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer">
+  <img src="assets/Logo.png" alt="Logo" width="160" height="160">
+ </a>
+<h2 align="center">VALORANT Rank Stream Displayer</h2>
+<h5 align="center">Still in development</h5>
+</p>
 
 [![Downloads][downloads-shield]][downloads-url]
 [![Discord][discord-shield]][discord-url]
@@ -27,9 +31,6 @@ Just open the `config.json` file within the `yrsd.exe` location and edit the dir
 
 ## Disclaimer
 **VALORANT Rank Stream Displayer** isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
-
-[project-logo]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/tree/master/assets/Logo.png
-[project-url]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer
 
 [discord-shield]: https://img.shields.io/discord/695727580950691960?color=7289da&label=Support&logo=discord&logoColor=7289da&style=for-the-badge
 [discord-url]: https://discord.gg/WgUDVAk
