@@ -26,6 +26,6 @@ class Config:
 
     def config_dialog(self, fileToWrite: TextIOWrapper):
         self.log("config prompt called")
-        jsonToWrite = {"cooldown": self.cooldown, "dir": self.dir}
+        jsonToWrite = {"cooldown": 1, "dir": "C:/VRSD/"}
         json.dump(jsonToWrite, fileToWrite)
         return jsonToWrite
