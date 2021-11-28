@@ -73,7 +73,7 @@ try:
             presence = presences.get_presence()
             game_state = presences.get_game_state(presence)
         except TypeError:
-            raise Exception("Game has not started yet!")
+            raise Exception(color("VALORANT has not started yet or the Riot Client has been closed!", fore=(255, 0, 0)))
 
         if cfg.cooldown == 0 or game_state != lastGameState:
             log(f"getting new {game_state} scoreboard")
@@ -338,6 +338,7 @@ try:
 
             table.field_names = ["Agent", "Name", "Rank", "RR", "Peak Rank", "#", "Level"]
             print(table)
+            print(f"Files can be found here: {cfg.dir}")
             print(f"VALORANT Rank Stream Displayer v{version}")
         if cfg.cooldown == 0:
             input("Press enter to fetch again...")

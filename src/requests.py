@@ -25,13 +25,17 @@ class Requests:
         #fetch puuid so its avaible outsite
         self.get_headers()
 
-    def check_version(self):
+    def check_status(self):
         # checking status
-        rStatus = requests.get(
-            "https://raw.githubusercontent.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/main/status.json").json()
+        status_json = "https://raw.githubusercontent.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/main/status.json"
+        rStatus = requests.get(status_json).json()
         if not rStatus["status_ok"] or rStatus["print_message"]:
             status_color = (255, 0, 0) if not rStatus["status_ok"] else (0, 255, 0)
             print(color(rStatus["message"], fore=status_color))
+
+    def check_version(self):
+        # checking status
+        self.check_status()
 
         # checking for latest release
         r = requests.get("https://api.github.com/repos/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/releases")
@@ -41,14 +45,6 @@ class Requests:
 
         if float(release_version) > float(self.version):
             print(f"New version available! {link}")
-
-    def check_status(self):
-        # checking status
-        rStatus = requests.get(
-            "https://raw.githubusercontent.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/main/status.json").json()
-        if not rStatus["status_ok"] or rStatus["print_message"]:
-            status_color = (255, 0, 0) if not rStatus["status_ok"] else (0, 255, 0)
-            print(color(rStatus["message"], fore=status_color))
             
     def fetch(self, url_type: str, endpoint: str, method: str):
         try:
@@ -128,7 +124,7 @@ class Requests:
                 return dict(zip(keys, data))
         except FileNotFoundError:
             self.log("lockfile not found")
-            raise Exception("Lockfile not found, you're not in a game!")
+            raise Exception(color("Riot Client has not been started! [Lockfile not found]", fore=(255,0,0)))
 
 
     def get_headers(self):
