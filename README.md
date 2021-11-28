@@ -1,3 +1,4 @@
+[![Project Logo][project-logo]][project-url]
 # VALORANT Rank Stream Displayer
 
 Still in development
@@ -8,9 +9,13 @@ Still in development
 [![License][license-shield]][license-url]
 
 ## Usage
-1. Run yrsd.exe
-2. You can find the files in `C:/VRSD/` but you can change the path to whatever you like.  
-Just open the `config.json` file and edit the dir path.
+1. Download the latest version of the `vrsd.exe` [here][downloads-url].
+2. Move `yrsd.exe` somewhere in your tool section.
+3. Start VALORANT (this should always be running before starting the `yrsd.exe`)
+4. Run `yrsd.exe`
+5. By default, you can find the files in `C:/VRSD/` but you can change the path to whatever you like.  
+Just open the `config.json` file within the `yrsd.exe` location and edit the dir path.
+6. Link every text and image you like to show in your streaming tool.
 
 ## Support
 [![Discord Banner 2][discord-banner]][discord-url]
@@ -22,6 +27,9 @@ Just open the `config.json` file and edit the dir path.
 
 ## Disclaimer
 **VALORANT Rank Stream Displayer** isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+
+[project-logo]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer/tree/master/assets/Logo.png
+[project-url]: https://github.com/OnlyOneCookie/VALORANT-Rank-Stream-Displayer
 
 [discord-shield]: https://img.shields.io/discord/695727580950691960?color=7289da&label=Support&logo=discord&logoColor=7289da&style=for-the-badge
 [discord-url]: https://discord.gg/WgUDVAk
