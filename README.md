@@ -12,13 +12,27 @@
 [![Language][language-shield]][language-url]
 [![License][license-shield]][license-url]
 
+## Preview
+Example how you can present your data  
+<img src="assets/data-preview.png" alt="Logo" width="300">
+
+### Data output
+<input type="checkbox" disabled checked> Agent (image)  
+<input type="checkbox" disabled checked> Peak Rank (image)  
+<input type="checkbox" disabled checked> Rank (image)  
+<input type="checkbox" disabled checked> Name  
+<input type="checkbox" disabled checked> Rank Rating (number)  
+<input type="checkbox" disabled checked> Leaderboard (number)  
+<input type="checkbox" disabled checked> Level  
+<input type="checkbox" disabled checked> Server  
+
 ## Usage
 1. Download the latest version of the `vrsd.exe` [here][downloads-url].
-2. Move `yrsd.exe` somewhere in your tool section.
-3. Start VALORANT (this should always be running before starting the `yrsd.exe`)
-4. Run `yrsd.exe`
+2. Move `vrsd.exe` somewhere in your tool section.
+3. Start VALORANT (this should always be running before starting the `vrsd.exe`)
+4. Run `vrsd.exe`
 5. By default, you can find the files in `C:/VRSD/` but you can change the path to whatever you like.  
-Just open the `config.json` file within the `yrsd.exe` location and edit the dir path.
+Just open the `config.json` file within the `vrsd.exe` location and edit the dir path.
 6. Link every text and image you like to show in your streaming tool.
 
 ## Support
