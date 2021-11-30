@@ -17,14 +17,14 @@ Example how you can present your data
 <img src="assets/data-preview.png" alt="Logo" width="300">
 
 ### Data output
-<input type="checkbox" disabled checked> Agent (image)  
-<input type="checkbox" disabled checked> Peak Rank (image)  
-<input type="checkbox" disabled checked> Rank (image)  
-<input type="checkbox" disabled checked> Name  
-<input type="checkbox" disabled checked> Rank Rating (number)  
-<input type="checkbox" disabled checked> Leaderboard (number)  
-<input type="checkbox" disabled checked> Level  
-<input type="checkbox" disabled checked> Server  
+* Agent (`image and text`)
+* Peak Rank (`image and text`)
+* Rank (`image and text`)
+* Name
+* Rank Rating
+* Leaderboard
+* Level
+* Server
 
 ## Usage
 1. Download the latest version of the `vrsd.exe` [here][downloads-url].

@@ -1,8 +1,4 @@
 import requests
-import shutil
-import os
-
-from src.constants import ICONS
 
 class Content():
     def __init__(self, Requests, log):
@@ -16,43 +12,56 @@ class Content():
     def get_latest_season_id(self, content):
         for season in content["Seasons"]:
             if season["IsActive"]:
-                self.log(f"retrieved season id: {season['ID']}")
+                self.log(f"[Content] Retrieved season id: {season['ID']}")
                 return season["ID"]
+
+    def get_current_season(self, content): 
+        return self.get_current_act(content) + " - " + self.get_current_episode(content)
+
+    def get_current_act(self, content):
+        for season in content["Seasons"]:
+            if season["IsActive"] and season["Type"] == "act":
+                return season["Name"].capitalize()
+
+    def get_current_episode(self, content):
+        for season in content["Seasons"]:
+            if season["IsActive"] and season["Type"] == "episode":
+                return season["Name"].capitalize()
+
+    def get_all_maps(self):
+        rMaps = requests.get("https://valorant-api.com/v1/maps").json()
+        map_dict = {}
+        for map in rMaps["data"]:
+            map_dict.update({map["mapUrl"]: map["displayName"]})
+        self.log(f"[Content] Retrieved maps: {map_dict}")
+        return map_dict
+
+    def get_all_modes(self):
+        rModes = requests.get("https://valorant-api.com/v1/gamemodes").json()
 
     def get_all_agents(self):
         rAgents = requests.get("https://valorant-api.com/v1/agents?isPlayableCharacter=true").json()
         agent_dict = {}
-        agent_dict.update({None: None})
         for agent in rAgents["data"]:
             agent_dict.update({agent['uuid'].lower(): agent['displayName']})
-        self.log(f"retrieved agent dict: {agent_dict}")
+        self.log(f"[Content] Retrieved agents: {agent_dict}")
         return agent_dict
 
-    def set_values_in_file(self, directory, type, value):
-        if not directory.endswith('/'):
-            directory += '/'
-        if not os.path.exists(directory):
-                os.makedirs(directory)
+    def get_all_ranks_icon(self, episode):
+        rRanks = requests.get("https://valorant-api.com/v1/competitivetiers").json()
+        rank_dict = {}
+        for data in rRanks["data"]:
+            obj = episode.replace(" ", "") + "_CompetitiveTierDataTable"
+            if obj == data["assetObjectName"]:
+                for tier in data["tiers"]:
+                    rank_dict.update({tier["tierName"].capitalize(): tier["largeIcon"]})
+        self.log(f"[Content] Retrieved ranks (icons): {rank_dict}")
+        return rank_dict
 
-        if type == "rank" or type == "peakRank" or type == "agent":
-            url = ""
-            if type == "rank" or type == "peakRank":
-                url = ICONS.get("Ranks").get(value, ICONS.get("Ranks").get("None"))
-            if type == "agent":
-                url = ICONS.get("Agents").get(value, ICONS.get("Agents").get("None"))
-            r = requests.get(url, stream=True)
-
-            if r.status_code == 200:
-                r.raw.decode_content = True
-
-                with open(f"{directory}{type}.png", 'wb+') as f:
-                    shutil.copyfileobj(r.raw, f)
-                    f.close()
-            else:
-                self.log("Image couldn\'t be retrieved")
-        else:
-            file = f"{directory}{type}.txt"
-
-            with open(file, 'w+', encoding='utf-8') as f:
-                f.write(f"{value}")
-                f.close()
+    def get_all_agents_icon(self):
+        rAgents = requests.get("https://valorant-api.com/v1/agents?isPlayableCharacter=true").json()
+        agent_dict = {}
+        for agent in rAgents["data"]:
+            agent_dict.update({agent["displayName"]: agent["displayIcon"]})
+        self.log(f"[Content] Retrieved agents (icons): {agent_dict}")
+        return agent_dict

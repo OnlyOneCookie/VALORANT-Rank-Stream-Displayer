@@ -8,10 +8,10 @@ class Coregame:
         try:
             self.response = self.Requests.fetch(url_type="glz", endpoint=f"/core-game/v1/players/{self.Requests.puuid}", method="get")
             match_id = self.response['MatchID']
-            self.log(f"retrieved coregame match id: '{match_id}'")
+            self.log(f"[Coregame] Retrieved match id: '{match_id}'")
             return match_id
         except (KeyError, TypeError):
-            self.log(f"cannot find coregame match id: ")
+            self.log(f"[Coregame] Cannot find match id")
             print(f"No match id found. {self.response}")
             return 0
 

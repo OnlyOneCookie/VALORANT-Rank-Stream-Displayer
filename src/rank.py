@@ -8,7 +8,7 @@ class Rank:
         response = self.Requests.fetch('pd', f"/mmr/v1/players/{puuid}", "get")
         try:
             if response.ok:
-                self.log("retrieved rank successfully")
+                self.log("[Rank] Retrieved rank successfully")
                 r = response.json()
                 rankTIER = r["QueueSkills"]["competitive"]["SeasonalInfoBySeasonID"][seasonID]["CompetitiveTier"]
                 if int(rankTIER) >= 21:
@@ -24,8 +24,7 @@ class Rank:
                     rank = [0, 0, 0]
 
             else:
-                self.log("failed getting rank")
-                self.log(response.text)
+                self.log(f"[Rank] Failed getting rank - response: {response.text}")
                 rank = [0, 0, 0]
         except TypeError:
             rank = [0, 0, 0]

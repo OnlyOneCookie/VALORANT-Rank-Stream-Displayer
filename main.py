@@ -9,6 +9,7 @@ from prettytable import PrettyTable
 from alive_progress import alive_bar
 
 from src.constants import *
+from src.data import Data
 from src.requests import Requests
 from src.logs import Logging
 from src.config import Config
@@ -37,16 +38,17 @@ def program_exit(status: int):  # so we don't need to import the entire sys modu
     raise SystemExit(status)
 
 try:
-    Requests = Requests(version)
-    Requests.check_version()
-    Requests.check_status()
-
     Logging = Logging()
     log = Logging.log
     cfg = Config(log)
 
+    Requests = Requests(version, log)
+    Requests.check_version()
+    Requests.check_status()
+
     rankClass = Rank(Requests, log)
     content = Content(Requests, log)
+    data = Data(Requests, cfg.dir, log)
     namesClass = Names(Requests, log)
     presences = Presences(Requests, log)
 
@@ -57,12 +59,11 @@ try:
     Server = Server(Requests)
     Server.start_server()
 
+    log(f"VALORANT Rank Stream Displayer v{version}")
+
     agent_dict = content.get_all_agents()
 
     tableClass = Table()
-
-    log(f"VALORANT Rank Stream Displayer v{version}")
-
     gameContent = content.get_content()
     seasonID = content.get_latest_season_id(gameContent)
     lastGameState = ""
@@ -86,9 +87,13 @@ try:
                 None: color("")
             }
 
+            currentSeason = content.get_current_season(gameContent)
+
             if game_state == "INGAME":
                 coregame_stats = coregame.get_coregame_stats()
                 server = GAMEPODS[coregame_stats["GamePodID"]]
+                map = MAPS[coregame_stats["MapID"]]
+                mode = MODES[coregame_stats["ModeID"]]
 
                 Players = coregame_stats["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
@@ -143,19 +148,14 @@ try:
                                                 leaderboard,
                                                 level
                                             ])
-                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
-                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
-                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
-                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    data.set_data(agent, name, rank, rr, peakRank, leaderboard, level, server, map, mode, currentSeason)
                     bar()
                         
             elif game_state == "PREGAME":
                 pregame_stats = pregame.get_pregame_stats()
                 server = GAMEPODS[pregame_stats["GamePodID"]]
+                map = MAPS[pregame_stats["MapID"]]
+                mode = MODES[pregame_stats["Mode"]]
 
                 Players = pregame_stats["AllyTeam"]["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
@@ -214,17 +214,12 @@ try:
                                                 leaderboard,
                                                 level
                                             ])
-                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
-                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
-                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
-                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    data.set_data(agent, name, rank, rr, peakRank, leaderboard, level, server, map, mode, currentSeason)
                     bar()
             elif game_state == "MENUS":
                 server = ""
+                map = ""
+                mode = ""
 
                 Players = menu.get_party_members(Requests.puuid, presence)
                 names = namesClass.get_names_from_puuids(Players)
@@ -274,17 +269,13 @@ try:
                                                 leaderboard,
                                                 level
                                             ])
-                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
-                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
-                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
-                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    data.set_data(agent, name, rank, rr, peakRank, leaderboard, level, server, map, mode, currentSeason)
                     bar()
             elif game_state == None:
                 server = ""
+                map = ""
+                mode = ""
+
                 with alive_bar(total=1, title='Loading', bar='classic2') as bar:
                     # Agent
                     agent = ""
@@ -315,16 +306,8 @@ try:
                                                 leaderboard,
                                                 level
                                             ])
-                    Content.set_values_in_file(Requests, cfg.dir, "agent", agent)
-                    Content.set_values_in_file(Requests, cfg.dir, "name", name)
-                    Content.set_values_in_file(Requests, cfg.dir, "rank", rank)
-                    Content.set_values_in_file(Requests, cfg.dir, "rr", rr)
-                    Content.set_values_in_file(Requests, cfg.dir, "peakRank", peakRank)
-                    Content.set_values_in_file(Requests, cfg.dir, "leaderboard", leaderboard)
-                    Content.set_values_in_file(Requests, cfg.dir, "level", level)
-                    Content.set_values_in_file(Requests, cfg.dir, "server", server)
+                    data.set_data(agent, name, rank, rr, peakRank, leaderboard, level, server, map, mode, currentSeason)
                     bar()
-
 
             title = game_state_dict.get(game_state)
 
@@ -332,9 +315,9 @@ try:
                 table.title = f"VALORANT Status: closed"
             else:
                 if server != "":
-                    table.title = f"VALORANT Status: {title} - {server}"
+                    table.title = f"VALORANT Status: {title} - {currentSeason} - {map} - {mode} - {server}"
                 else:
-                    table.title = f"VALORANT Status: {title}"
+                    table.title = f"VALORANT Status: {title} - {currentSeason}"
 
             table.field_names = ["Agent", "Name", "Rank", "RR", "Peak Rank", "#", "Level"]
             print(table)

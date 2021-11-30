@@ -5,19 +5,16 @@ import requests
 from colr import color
 import os
 
-from src.logs import Logging
-
 class Requests:
-    def __init__(self, version):
+    def __init__(self, version, log):
         self.version = version
         self.headers = {}
-        self.Logging = Logging()
-        self.log = self.Logging.log
+        self.log = log
 
         self.region = self.get_region()
         self.pd_url = f"https://pd.{self.region[0]}.a.pvp.net"
         self.glz_url = f"https://glz-{self.region[1][0]}.{self.region[1][1]}.a.pvp.net"
-        self.log(f"Api urls: pd_url: '{self.pd_url}', glz_url: '{self.glz_url}'")
+        self.log(f"[API] pd_url: '{self.pd_url}', glz_url: '{self.glz_url}'")
         self.region = self.region[0]
         self.lockfile = self.get_lockfile()
 
@@ -50,8 +47,6 @@ class Requests:
         try:
             if url_type == "glz":
                 response = requests.request(method, self.glz_url + endpoint, headers=self.get_headers(), verify=False)
-                self.log(f"fetch: url: '{url_type}', endpoint: {endpoint}, method: {method},"
-                    f" response code: {response.status_code}")
                 if not response.ok:
                     time.sleep(5)
                     self.headers = {}
@@ -59,9 +54,6 @@ class Requests:
                 return response.json()
             elif url_type == "pd":
                 response = requests.request(method, self.pd_url + endpoint, headers=self.get_headers(), verify=False)
-                self.log(
-                    f"fetch: url: '{url_type}', endpoint: {endpoint}, method: {method},"
-                    f" response code: {response.status_code}")
                 if not response.ok:
                     time.sleep(5)
                     self.headers = {}
@@ -73,19 +65,13 @@ class Requests:
                 response = requests.request(method, f"https://127.0.0.1:{self.lockfile['port']}{endpoint}",
                                             headers=local_headers,
                                             verify=False)
-                self.log(
-                    f"fetch: url: '{url_type}', endpoint: {endpoint}, method: {method},"
-                    f" response code: {response.status_code}")
                 return response.json()
             elif url_type == "custom":
                 response = requests.request(method, f"{endpoint}", headers=self.get_headers(), verify=False)
-                self.log(
-                    f"fetch: url: '{url_type}', endpoint: {endpoint}, method: {method},"
-                    f" response code: {response.status_code}")
                 if not response.ok: self.headers = {}
                 return response.json()
         except json.decoder.JSONDecodeError:
-            self.log(f"JSONDecodeError in fetch function, resp.code: {response.status_code}, resp_text: '{response.text}")
+            self.log(f"[Requests] JSONDecodeError in fetch function, resp.code: {response.status_code}, resp_text: '{response.text}")
             print(response)
             print(response.text)
 
@@ -112,18 +98,18 @@ class Requests:
                     version = version_without_shipping.split("-")
                     version.insert(2, "shipping")
                     version = "-".join(version)
-                    self.log(f"got version from logs '{version}'")
+                    self.log(f"[VALORANT]: '{version}'")
                     return version
 
     def get_lockfile(self):
         try:
             with open(os.path.join(os.getenv('LOCALAPPDATA'), R'Riot Games\Riot Client\Config\lockfile')) as lockfile:
-                self.log("opened log file")
+                self.log("[Riot Client] Lockfile found")
                 data = lockfile.read().split(':')
                 keys = ['name', 'PID', 'port', 'password', 'protocol']
                 return dict(zip(keys, data))
         except FileNotFoundError:
-            self.log("lockfile not found")
+            self.log("[Riot Client] Lockfile not found")
             raise Exception(color("Riot Client has not been started! [Lockfile not found]", fore=(255,0,0)))
 
 
