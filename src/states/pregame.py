@@ -9,10 +9,10 @@ class Pregame:
         try:
             response = self.Requests.fetch(url_type="glz", endpoint=f"/pregame/v1/players/{self.Requests.puuid}", method="get")
             match_id = response['MatchID']
-            self.log(f"retrieved pregame match id: '{match_id}'")
+            self.log(f"[Pregame] Retrieved match id: '{match_id}'")
             return match_id
         except (KeyError, TypeError):
-            self.log(f"cannot find pregame match id: ")
+            self.log(f"[Pregame] Cannot find pregame match id")
             print(f"No match id found. {self.response}")
             return 0
 

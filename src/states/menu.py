@@ -10,8 +10,6 @@ class Menu:
             if presence["puuid"] == self_puuid:
                 decodedPresence = self.presences.decode_presence(presence["private"])
                 if decodedPresence["isValid"]:
-                    party_id = decodedPresence["partyId"]
-                    res.append({"Subject": presence["puuid"], "PlayerIdentity": {"AccountLevel":
-                                                                                     decodedPresence["accountLevel"]}})
-        self.log(f"retrieved party members: {res}")
+                    res.append({"Subject": presence["puuid"], "PlayerIdentity": {"AccountLevel": decodedPresence["accountLevel"]}})
+        self.log(f"[Menu] Retrieved party members: {res}")
         return res
