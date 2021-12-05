@@ -2,13 +2,15 @@ import requests
 import shutil
 import os
 
-from src.constants import ICONS
-
 class Data():
     def __init__(self, Requests, directory, log):
         self.Requests = Requests
         self.directory = directory
         self.log = log
+        self.icons = {}
+
+    def set_icons(self, icons):
+        self.icons = icons
 
     def set_data(self, agent, name, rank, rr, peakRank, leaderboard, level, server, map, mode, currentSeason):
         self.__save("agent", agent)
@@ -32,9 +34,9 @@ class Data():
         if type == "rank" or type == "peakRank" or type == "agent":
             url = ""
             if type == "rank" or type == "peakRank":
-                url = ICONS.get("Ranks").get(value, ICONS.get("Ranks").get("None"))
+                url = self.icons.get("Ranks").get(value, "https://i.imgur.com/sFMYwtk.png")
             if type == "agent":
-                url = ICONS.get("Agents").get(value, ICONS.get("Agents").get("None"))
+                url = self.icons.get("Agents").get(value, "https://i.imgur.com/sFMYwtk.png")
             r = requests.get(url, stream=True)
 
             if r.status_code == 200:

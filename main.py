@@ -59,13 +59,23 @@ try:
     Server = Server(Requests)
     Server.start_server()
 
-    log(f"VALORANT Rank Stream Displayer v{version}")
-
-    agent_dict = content.get_all_agents()
+    log(f"[App] VALORANT Rank Stream Displayer v{version}")
 
     tableClass = Table()
     gameContent = content.get_content()
-    seasonID = content.get_latest_season_id(gameContent)
+    episode = content.get_current_episode()
+    act = content.get_current_act()
+    currentSeason = content.get_current_season()
+
+    ranks_arr = content.get_all_ranks(episode)
+    agent_dict = content.get_all_agents()
+    map_dict = content.get_all_maps()
+    mode_dict = content.get_all_modes()
+
+    icons_dict = content.get_all_icons(episode)
+    data.set_icons(icons_dict)
+
+    seasonID = content.get_latest_season_id()
     lastGameState = ""
 
     while True:
@@ -77,7 +87,7 @@ try:
             raise Exception(color("VALORANT has not started yet or the Riot Client has been closed!", fore=(255, 0, 0)))
 
         if cfg.cooldown == 0 or game_state != lastGameState:
-            log(f"getting new {game_state} scoreboard")
+            log(f"[Game State] Getting new statistics from the {game_state}")
             lastGameState = game_state
 
             game_state_dict = {
@@ -87,13 +97,12 @@ try:
                 None: color("")
             }
 
-            currentSeason = content.get_current_season(gameContent)
-
             if game_state == "INGAME":
                 coregame_stats = coregame.get_coregame_stats()
+                log(f"core game {coregame_stats}")
                 server = GAMEPODS[coregame_stats["GamePodID"]]
-                map = MAPS[coregame_stats["MapID"]]
-                mode = MODES[coregame_stats["ModeID"]]
+                map = map_dict[coregame_stats["MapID"]]
+                mode = mode_dict[coregame_stats["ModeID"].split(".", 1)[0]]
 
                 Players = coregame_stats["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
@@ -103,7 +112,7 @@ try:
 
                 with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     presence = presences.get_presence()
-                    log(f"retrieved names dict: {names}")
+                    log(f"[Player] Details: {names}")
                     
                     # Player
                     player = Players[0]
@@ -126,13 +135,13 @@ try:
                     playerRank = playerRank[0]
 
                     # Rank
-                    rank = RANKS[playerRank[0]]
+                    rank = ranks_arr[playerRank[0]]
 
                     # Rank Rating
                     rr = playerRank[1]
 
                     # Peak Rank
-                    peakRank = RANKS[playerRank[3]]
+                    peakRank = ranks_arr[playerRank[3]]
 
                     # Leaderboard
                     leaderboard = playerRank[2]
@@ -154,8 +163,8 @@ try:
             elif game_state == "PREGAME":
                 pregame_stats = pregame.get_pregame_stats()
                 server = GAMEPODS[pregame_stats["GamePodID"]]
-                map = MAPS[pregame_stats["MapID"]]
-                mode = MODES[pregame_stats["Mode"]]
+                map = map_dict[pregame_stats["MapID"]]
+                mode = mode_dict[pregame_stats["Mode"].split(".", 1)[0]]
 
                 Players = pregame_stats["AllyTeam"]["Players"]
                 Players = list(filter(lambda a: a["Subject"] == Requests.puuid, Players))
@@ -164,7 +173,7 @@ try:
 
                 with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
                     presence = presences.get_presence()
-                    log(f"retrieved names dict: {names}")
+                    log(f"[Player] Details: {names}")
 
                     # Player
                     player = Players[0]
@@ -192,13 +201,13 @@ try:
                     name = names[player["Subject"]]
 
                     # Rank
-                    rank = RANKS[playerRank[0]]
+                    rank = ranks_arr[playerRank[0]]
 
                     # Rank Rating
                     rr = playerRank[1]
 
                     # Peak Rank
-                    peakRank = RANKS[playerRank[3]]
+                    peakRank = ranks_arr[playerRank[3]]
 
                     # Leaderboard
                     leaderboard = playerRank[2]
@@ -225,7 +234,7 @@ try:
                 names = namesClass.get_names_from_puuids(Players)
                 
                 with alive_bar(total=len(Players), title='Fetching player data', bar='classic2') as bar:
-                    log(f"retrieved names dict: {names}")
+                    log(f"[Player] Details: {names}")
 
                     player = Players[0]
 
@@ -247,13 +256,13 @@ try:
                     name = names[player["Subject"]]
 
                     # Rank
-                    rank = RANKS[playerRank[0]]
+                    rank = ranks_arr[playerRank[0]]
 
                     # Rank Rating
                     rr = playerRank[1]
 
                     # Peak Rank
-                    peakRank = RANKS[playerRank[3]]
+                    peakRank = ranks_arr[playerRank[3]]
 
                     # Leaderboard
                     leaderboard = playerRank[2]

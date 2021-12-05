@@ -14,17 +14,20 @@
 
 ## Preview
 Example how you can present your data  
-<img src="assets/data-preview.png" alt="Logo" width="300">
+<img src="assets/data-preview.png" alt="Data example preview" width="300">
 
 ### Data output
-* Agent (`image and text`)
-* Peak Rank (`image and text`)
-* Rank (`image and text`)
+* Agent (`image/text`)
+* Peak Rank (`image/text`)
+* Rank (`image/text`)
 * Name
 * Rank Rating
 * Leaderboard
 * Level
 * Server
+* Map
+* Mode
+* Season
 
 ## Usage
 1. Download the latest version of the `vrsd.exe` [here][downloads-url].

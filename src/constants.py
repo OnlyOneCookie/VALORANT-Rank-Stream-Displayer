@@ -1,6 +1,6 @@
 from colr import color
 
-version = "1.20"
+version = "1.30"
 
 GAMEPODS = {
     "aresriot.aws-rclusterprod-mes1-1.eu-gp-bahrain-awsedge-1": "Bahrain",
@@ -100,102 +100,4 @@ GAMEPODS = {
     "aresqa.aws-rclusterprod-usw2-3.dev1-gp-4": "US West 2",
     "aresriot.aws-rclusterprod-waw1-1.eu-gp-warsaw-1": "Warsaw",
     "aresriot.aws-rclusterprod-waw1-1.tournament-gp-warsaw-1": "Warsaw"
-}
-
-MAPS = {
-    "/Game/Maps/Triad/Triad": "Haven",
-    "/Game/Maps/Duality/Duality": "Bind",
-    "/Game/Maps/Bonsai/Bonsai": "Split",
-    "/Game/Maps/Ascent/Ascent": "Ascent",
-    "/Game/Maps/Port/Port": "Icebox",
-    "/Game/Maps/Foxtrot/Foxtrot": "Breeze",
-    "/Game/Maps/Canyon/Canyon": "Fracture"
-}
-
-# Standard should be either unrated, competitive or standard (which is called in custom games)
-# Snowball is missing
-
-MODES = {
-    "/Game/GameModes/Bomb/BombGameMode.BombGameMode_C": "Standard",
-    "/Game/GameModes/Deathmatch/DeathmatchGameMode.DeathmatchGameMode_C": "Deathmatch",
-    "/Game/GameModes/GunGame/GunGameTeamsGameMode.GunGameTeamsGameMode_C": "Escalation",
-    "/Game/GameModes/OneForAll/OneForAll_GameMode.OneForAll_GameMode_C": "Replication",
-    "/Game/GameModes/QuickBomb/QuickBombGameMode.QuickBombGameMode_C": "Spike Rush"
-}
-
-RANKS = [
-    'Unrated',
-    'Unrated',
-    'Unrated',
-    'Iron 1', 
-    'Iron 2',
-    'Iron 3',
-    'Bronze 1',
-    'Bronze 2', 
-    'Bronze 3', 
-    'Silver 1', 
-    'Silver 2', 
-    'Silver 3', 
-    'Gold 1',
-    'Gold 2',
-    'Gold 3',
-    'Platinum 1',
-    'Platinum 2',
-    'Platinum 3',
-    'Diamond 1', 
-    'Diamond 2', 
-    'Diamond 3', 
-    'Immortal 1',
-    'Immortal 2',
-    'Immortal 3',
-    'Radiant'
-]
-
-ICONS = {
-    "Ranks": {
-        "None": "https://i.imgur.com/sFMYwtk.png",
-        "Unrated": "https://i.imgur.com/sFMYwtk.png",
-        "Iron 1": "https://i.imgur.com/mXv3VvN.png", 
-        "Iron 2": "https://i.imgur.com/QGqoFhj.png",
-        "Iron 3": "https://i.imgur.com/nozjqhS.png",
-        "Bronze 1": "https://i.imgur.com/TpdNK2q.png",
-        "Bronze 2": "https://i.imgur.com/wT82oI0.png", 
-        "Bronze 3": "https://i.imgur.com/gjZxeAi.png", 
-        "Silver 1": "https://i.imgur.com/Y3uIQAP.png", 
-        "Silver 2": "https://i.imgur.com/3Krkw93.png", 
-        "Silver 3": "https://i.imgur.com/Cjv2PSQ.png", 
-        "Gold 1": "https://i.imgur.com/Ih2y1uc.png",
-        "Gold 2": "https://i.imgur.com/N5PUvoC.png",
-        "Gold 3": "https://i.imgur.com/PUemVGp.png",
-        "Platinum 1": "https://i.imgur.com/ptVvqX5.png",
-        "Platinum 2": "https://i.imgur.com/35Tg3zY.png",
-        "Platinum 3": "https://i.imgur.com/nPxa5uR.png",
-        "Diamond 1": "https://i.imgur.com/AYnfg3E.png", 
-        "Diamond 2": "https://i.imgur.com/kv1KtZD.png", 
-        "Diamond 3": "https://i.imgur.com/L8aV8A2.png", 
-        "Immortal 1": "https://i.imgur.com/D6DvMUU.png",
-        "Immortal 2": "https://i.imgur.com/xb3fI8F.png",
-        "Immortal 3": "https://i.imgur.com/WxVm0aO.png",
-        "Radiant": "https://i.imgur.com/upQQjy6.png"
-    },
-    "Agents": {
-        "None": "https://i.imgur.com/sFMYwtk.png",
-        "Astra": "https://i.imgur.com/1PWnXyL.png",
-        "Breach": "https://i.imgur.com/q0ur87L.png", 
-        "Brimstone": "https://i.imgur.com/5yrhVO4.png",
-        "Cypher": "https://i.imgur.com/4cF8nRk.png",
-        "Jett": "https://i.imgur.com/fmcPluo.png",
-        "KAY/O": "https://i.imgur.com/UMzJ3kz.png", 
-        "Killjoy": "https://i.imgur.com/ZLViDMJ.png", 
-        "Omen": "https://i.imgur.com/Oe4u8eQ.png", 
-        "Phoenix": "https://i.imgur.com/XKBQzC9.png", 
-        "Raze": "https://i.imgur.com/nCvzAyY.png", 
-        "Reyna": "https://i.imgur.com/csEQb21.png",
-        "Sage": "https://i.imgur.com/eerQXX0.png",
-        "Skye": "https://i.imgur.com/VcLT6C1.png",
-        "Sova": "https://i.imgur.com/k24kBWc.png",
-        "Viper": "https://i.imgur.com/gy0W5Kb.png",
-        "Yoru": "https://i.imgur.com/YYthwTx.png",
-        "Chamber": "https://i.imgur.com/yNRr85w.png?1"
-    }
 }
